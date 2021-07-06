@@ -80,7 +80,7 @@ childsrc = ["'self'"]
 fontsrc = ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net/"]
 formaction = ["'self'"]
 framesrc = ["'self'"]
-imgsrc = ["'self'"]
+imgsrc = ["'self'", "https://pizzey.goatcounter.com"]
 objectsrc = ["'none'"]
 stylesrc = [
   "'self'",
