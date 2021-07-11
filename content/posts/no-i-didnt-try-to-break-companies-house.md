@@ -1,6 +1,7 @@
 ---
 title: "No, I didn't try to break Companies House"
 date: 2016-12-30T17:00:19+01:00
+aliases: [/blog/no-i-didnt-try-to-break-companies-house/]
 ---
 
 I have a tendency to take a joke too far.
