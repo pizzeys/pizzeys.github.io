@@ -1,0 +1,214 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests; block-all-mixed-content; default-src 'self'; child-src 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/; form-action 'self'; frame-src 'self'; img-src 'self' https://pizzey.goatcounter.com; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/ https://cdn.jsdelivr.net/; script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://gc.zgo.at; prefetch-src 'self'; connect-src 'self' https://www.google-analytics.com;">
+<meta name=author content="Sam Pizzey">
+<meta name=description content="I seem to end up spending a lot of my time looking for vulnerabilities in PHP applications. Until fairly recently, my process for this mostly consisted of reading the code (duh), navigating either manually or via Github&rsquo;s surprisingly-good References feature. I used to sometimes import large projects into an IDE for this functionality, which I&rsquo;m glad I don&rsquo;t have to do anymore.
+Along with this I make quite heavy use of ripgrep and phpgrep to assist in finding what I&rsquo;m looking for.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="How I Hack PHP Apps (Now)">
+<meta name=twitter:description content="I seem to end up spending a lot of my time looking for vulnerabilities in PHP applications. Until fairly recently, my process for this mostly consisted of reading the code (duh), navigating either manually or via Github&rsquo;s surprisingly-good References feature. I used to sometimes import large projects into an IDE for this functionality, which I&rsquo;m glad I don&rsquo;t have to do anymore.
+Along with this I make quite heavy use of ripgrep and phpgrep to assist in finding what I&rsquo;m looking for.">
+<meta property="og:title" content="How I Hack PHP Apps (Now)">
+<meta property="og:description" content="I seem to end up spending a lot of my time looking for vulnerabilities in PHP applications. Until fairly recently, my process for this mostly consisted of reading the code (duh), navigating either manually or via Github&rsquo;s surprisingly-good References feature. I used to sometimes import large projects into an IDE for this functionality, which I&rsquo;m glad I don&rsquo;t have to do anymore.
+Along with this I make quite heavy use of ripgrep and phpgrep to assist in finding what I&rsquo;m looking for.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://pizzey.me/posts/how-i-hack-php-apps/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-07-24T23:38:30+01:00">
+<meta property="article:modified_time" content="2021-07-24T23:38:30+01:00">
+<title>
+How I Hack PHP Apps (Now) · Sam Pizzey
+</title>
+<link rel=canonical href=https://pizzey.me/posts/how-i-hack-php-apps/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.34dfa7b2f5cdeb0f5302b2628f4a7a4bfe88a2431e1397ee4ec605c56ab69701.css integrity="sha256-NN+nsvXN6w9TArJij0p6S/6IokMeE5fuTsYFxWq2lwE=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/custom.css>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.86.0">
+</head>
+<body class="preload-transitions colorscheme-light">
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>
+Sam Pizzey
+</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle>
+<i class="fa fa-bars fa-fw" aria-hidden=true></i>
+</label>
+<ul class=navigation-list>
+<li class=navigation-item>
+<a class=navigation-link href=/posts/>Blog</a>
+</li>
+<li class=navigation-item>
+<a class=navigation-link href=/contact/>Contact</a>
+</li>
+</ul>
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=https://pizzey.me/posts/how-i-hack-php-apps/>
+How I Hack PHP Apps (Now)
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2021-07-24T23:38:30+01:00>
+July 24, 2021
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read
+</span>
+</div>
+</div>
+</header>
+<div>
+<p>I seem to end up spending a lot of my time looking for vulnerabilities in PHP
+applications. Until fairly recently, my process for this mostly consisted of
+reading the code (duh), navigating either manually or via Github&rsquo;s surprisingly-good
+References feature. I used to sometimes import large projects into an IDE
+for this functionality, which I&rsquo;m glad I don&rsquo;t have to do anymore.</p>
+<p>Along with this I make quite heavy use of <a href=https://github.com/BurntSushi/ripgrep>ripgrep</a>
+and <a href=https://github.com/quasilyte/phpgrep>phpgrep</a> to assist in finding what
+I&rsquo;m looking for. I&rsquo;m still working on efficient use of phpgrep actually, I can&rsquo;t decide
+if I love it or not yet.</p>
+<p>At some point, though, I&rsquo;d end up in the position of inserting <code>var_dump()</code> and
+<code>die()</code> calls to better follow what&rsquo;s going on or to test a hypothesis. And while
+there is certainly a place for print-debugging, when it becomes a core part of
+your workflow, maybe it&rsquo;s time to improve things. Besides, there&rsquo;s all sorts of
+scenarios where it can cause issues - everyone has had the experience I think of
+putting a <code>var_dump()</code> or similar somewhere, not realising it would get included
+in a JSON response, and breaking the page. Sometimes, friends, we must
+suck it up and use a real debugger like those weird binary exploitation people.</p>
+<p>Coincidentally I have also switched my main development machine from Linux to
+Windows as well, so my mission was clear - can I get an awesome PHP audit environment,
+that runs on Windows, has a real debuggger, and doesn&rsquo;t rely on any heavyweight tools?</p>
+<ul>
+<li>
+<p><strong>Step 0: Have a local environment for running PHP.</strong></p>
+<p>OK, you probably already do, if you&rsquo;re reading this. But, I want to make a
+suggestion: Use Windows as your development OS, and then use WSL2. You may be
+recoiling right now, and if so, I understand, keep using your Mac or Linux
+machine. But, I changed to Windows recently. And this is my setup guide.</p>
+<p>If you haven&rsquo;t tried WSL since WSL1, it is actually <em>fantastic</em>. Despite
+using Windows now, I am in a WSL2 terminal pretty much all day for &lsquo;real work&rsquo;,
+but my graphical tools (editor etc.) are Windows.</p>
+<p>For my hacking environment, I have mod_userdir configured to serve a directory
+from my home directory and I just install the vulnerable applications there.
+You can configure that
+<a href=https://codingjungle.com/tutorials/development/install-lamp-to-wsl2-in-windows-10-and-configure-vs-code-for-wsl2-r43/>like this</a>,
+except you don&rsquo;t need to use the <code>add-apt-repository</code> lines, just use the default packages.</p>
+</li>
+<li>
+<p><strong>Step 1: Use VSCode as your editor.</strong></p>
+<p>I am a Vim die-hard. Switching to VSCode like all the cool kids were doing was
+a no-no for me. Then I did, and it turns out it&rsquo;s excellent, so whoops. For this
+use, the primary reasons are: it has WSL2 integration that just works, so when
+you open a project in WSL2, it handles all of the WSL2 magic transparently,
+including starting the instance if it&rsquo;s not running, installing any extension files
+needed, etc. And it has a graphical debug interface, which is kind of the point
+here. I do still use Vim emulation for keybinds, though, I don&rsquo;t think that will ever change.</p>
+</li>
+<li>
+<p><strong>Step 2: Install the Xdebug PHP extension.</strong></p>
+<p>In your WSL2 environment, make sure the Xdebug php extension is installed. For
+Ubuntu based systems, this is <code>apt install php-xdebug</code>. You then want to head
+to your <code>/etc/php/7.4/mods-available/xdebug.ini</code> or equivalent and set:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>xdebug.remote_enable = 1
+xdebug.remote_autostart = 1
+</code></pre></div><p>And then restart Apache. That&rsquo;s all the configuration required. (Easy, innit?)
+This setup basically tells Xdebug to automatically run
+on every PHP script, and try to connect to a frontend using the default settings.
+You probably shouldn&rsquo;t do this on a production server, but on a development
+box it works fine. Even if the frontend is closed or not debugging, it will
+still complete the request.</p>
+</li>
+<li>
+<p><strong>Step 3: Install the VSCode extension</strong></p>
+<p>Now you should go to Extensions in VSCode and install the extension &lsquo;PHP Debug&rsquo;
+by Felix Becker. This is the adapter that hooks up Xdebug to the VSCode UI.</p>
+<p>It uses the default Xdebug parameters, so you don&rsquo;t need to configure anything here.</p>
+</li>
+<li>
+<p><strong>Step 4: launch.json and &lsquo;wait for debug&rsquo;</strong></p>
+<p>You will need a <code>launch.json</code> file, which is VSCode&rsquo;s way of specifying debug targets.
+If you head to where your application is installed in a WSL2 Terminal and run <code>code</code>,
+this will open the project in WSL2 and install any necessary components. Then, press
+&lsquo;Run and Debug&rsquo; on the left bar (looks like a play button with a bug next to it) and
+click &lsquo;create a launch.json file&rsquo; and then &lsquo;PHP&rsquo;. This will create the default file
+for you in your project directory, which is fine. There is, apparently, a way to get
+this to happen as an app-wide default without needing to generate a file per-project,
+but I didn&rsquo;t manage to get it to work. I will update this in future if I do.</p>
+<p>Set a breakpoint in your application by clicking to the left of the line numbering
+on a line that you are interested in exploring. You will get a red dot to show
+a breakpoint has been set. Now click &lsquo;Start Debugging&rsquo; in the Run menu and your
+VSCode will switch to the debug view with &lsquo;Listen for Xdebug&rsquo; in the status bar.</p>
+<p>Make a request to your application which hits that breakpoint, in your usual browser.</p>
+</li>
+<li>
+<p><strong>Step 5: Hack some stuff.</strong></p>
+<p>If all went well, you will see something like this:</p>
+<p><img src=/images/debugging.png alt="My debugger"></p>
+<p>If you have used a debugger before, this will look delightfully familiar. If not, some
+features of note:</p>
+<ul>
+<li>The code is shown in the place it normally is. You can navigate through this using the
+pop up debug bar at the top or the appropriate keyboard shortcuts. Step Over means
+&lsquo;run the code at the line I&rsquo;m pointing at and don&rsquo;t take me through it&rsquo;, such as if
+it&rsquo;s a library function you don&rsquo;t care about. Step Into means, &lsquo;no I do care about it,
+take me through that step by step as well&rsquo;. Continue means &lsquo;stop going step by step and run
+until the next breakpoint&rsquo;. Step Out means &lsquo;run until we return from the function we are in,
+then go step by step again&rsquo;.</li>
+<li>The Variables window in the top left shows all of the variables in scope at the
+moment and their values. You can right click these to add them to the Watch window below, if they are
+important and you want to keep an eye on them. Notice you can view the
+superglobals such as <code>$_GET</code> here.</li>
+<li>Underneath the Watch window you have the call stack. It tells you how you got to where
+we are now, ie, what was called in order to reach the current function.</li>
+<li>In the Breakpoints window you can quickly toggle any breakpoints you have set. You can
+also choose to break on any error/exception/warning, instead of a specific line of code.</li>
+</ul>
+<p>At some point I&rsquo;d like to do a video on how this can improve bug hunting efforts, but
+hopefully like me some of you had been looking for a nice environment for PHP debugging and can
+make use of it!</p>
+</li>
+</ul>
+</div>
+<footer>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2014 -
+2021
+Sam Pizzey
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+<script data-goatcounter=https://pizzey.goatcounter.com/count async src=//gc.zgo.at/count.js></script>
+</body>
+</html>
