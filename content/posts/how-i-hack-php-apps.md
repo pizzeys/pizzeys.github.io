@@ -1,6 +1,7 @@
 +++ 
 date = 2021-07-24T23:38:30+01:00
 title = "How I Hack PHP Apps (Now)"
+images = ["images/debugging.png"]
 +++
 
 I seem to end up spending a lot of my time looking for vulnerabilities in PHP
