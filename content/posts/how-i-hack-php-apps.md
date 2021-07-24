@@ -1,5 +1,5 @@
 +++ 
-date = 2021-07-4T23:38:30+01:00
+date = 2021-07-24T23:38:30+01:00
 title = "How I Hack PHP Apps (Now)"
 +++
 
