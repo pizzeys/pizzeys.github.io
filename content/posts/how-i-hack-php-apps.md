@@ -57,16 +57,62 @@ that runs on Windows, has a real debuggger, and doesn't rely on any heavyweight 
 
 * **Step 2: Install the Xdebug PHP extension.**
 
-  In your WSL2 environment, make sure the Xdebug php extension is installed. For
-  Ubuntu based systems, this is ``apt install php-xdebug``. You then want to head
-  to your ``/etc/php/7.4/mods-available/xdebug.ini`` or equivalent and set:
+  We need to install the Xdebug PHP extension, which enables step debugging, amongst
+  other features. You can choose to either use Xdebug version 2, which is installed
+  in the Ubuntu distribution supplied with WSL, or you can install Xdebug version 3.
 
-  ```
-  xdebug.remote_enable = 1
-  xdebug.remote_autostart = 1
-  ```
+  Both will work with the debugging extension we use later on, but the Xdebug team
+  no longer support version 2. I have only recently started to use 3, myself, so
+  I include both instructions here in case you have any problems with 3 I don't know
+  about - however I recommend trying to use 3 first, and only using the unsupported
+  version if you need to.
 
-  And then restart Apache. That's all the configuration required. (Easy, innit?)
+  * Version 3 (Recommended)
+
+    We can't simply install Xdebug from APT, because the version of Ubuntu that WSL
+    ships currently (assuming you're not using your own distro) doesn't include a
+    currently supported Xdebug. So, we will install it from PECL:
+  
+    ```
+    sudo apt install php-pear php7.4-dev
+    sudo pecl channel-update pecl.php.net
+    pecl install xdebug
+    ```
+  
+    Then edit (or create, if not present) the file
+    ``/etc/php/7.4/mods-available/xdebug.ini``:
+  
+    ```
+    zend_extension="/usr/lib/php/20190902/xdebug.so"
+  
+    [xdebug]
+    xdebug.mode=debug
+    xdebug.start_with_request=yes
+    ```
+    
+    *You should double check the zend\_extension line above!* The appropriate path to use
+    will be given to you from the ``pecl install`` command, follow its directions if they
+    differ from mine in this regard.
+
+    Then run ``sudo phpenmod xdebug`` and ``sudo service apache2 restart``.
+
+    You will notice the configuration is different to 2. There is a good [document
+    on the changes](https://xdebug.org/docs/upgrade_guide).
+
+  * Version 2 (Unsupported)
+
+    You can simply run ``sudo apt install php-xdebug`` to install the extension.
+
+    The required configuration is different, use the following:
+
+    ```
+    xdebug.remote_enable = 1
+    xdebug.remote_autostart = 1
+    xdebug.remote_port = 9003
+    ```
+
+    And then ``sudo phpenmod xdebug`` and ``sudo service apache2 restart`` as above.
+
   This setup basically tells Xdebug to automatically run
   on every PHP script, and try to connect to a frontend using the default settings.
   You probably shouldn't do this on a production server, but on a development 
