@@ -1,5 +1,6 @@
 +++ 
 date = 2021-07-24T23:38:30+01:00
+lastmod = 2021-07-25T20:50:30+01:00
 title = "How I Hack PHP Apps (Now)"
 images = ["images/debugging.png"]
 +++
