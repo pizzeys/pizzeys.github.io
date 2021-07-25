@@ -76,7 +76,7 @@ July 24, 2021
 </span>
 <span class=reading-time>
 <i class="fa fa-clock-o" aria-hidden=true></i>
-6-minute read
+7-minute read
 </span>
 </div>
 </div>
@@ -130,13 +130,48 @@ here. I do still use Vim emulation for keybinds, though, I don&rsquo;t think tha
 </li>
 <li>
 <p><strong>Step 2: Install the Xdebug PHP extension.</strong></p>
-<p>In your WSL2 environment, make sure the Xdebug php extension is installed. For
-Ubuntu based systems, this is <code>apt install php-xdebug</code>. You then want to head
-to your <code>/etc/php/7.4/mods-available/xdebug.ini</code> or equivalent and set:</p>
+<p>We need to install the Xdebug PHP extension, which enables step debugging, amongst
+other features. You can choose to either use Xdebug version 2, which is installed
+in the Ubuntu distribution supplied with WSL, or you can install Xdebug version 3.</p>
+<p>Both will work with the debugging extension we use later on, but the Xdebug team
+no longer support version 2. I have only recently started to use 3, myself, so
+I include both instructions here in case you have any problems with 3 I don&rsquo;t know
+about - however I recommend trying to use 3 first, and only using the unsupported
+version if you need to.</p>
+<ul>
+<li>
+<p>Version 3 (Recommended)</p>
+<p>We can&rsquo;t simply install Xdebug from APT, because the version of Ubuntu that WSL
+ships currently (assuming you&rsquo;re not using your own distro) doesn&rsquo;t include a
+currently supported Xdebug. So, we will install it from PECL:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sudo apt install php-pear php7.4-dev
+sudo pecl channel-update pecl.php.net
+pecl install xdebug
+</code></pre></div><p>Then edit (or create, if not present) the file
+<code>/etc/php/7.4/mods-available/xdebug.ini</code>:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>zend_extension=&#34;/usr/lib/php/20190902/xdebug.so&#34;
+
+[xdebug]
+xdebug.mode=debug
+xdebug.start_with_request=yes
+</code></pre></div><p><em>You should double check the zend_extension line above!</em> The appropriate path to use
+will be given to you from the <code>pecl install</code> command, follow its directions if they
+differ from mine in this regard.</p>
+<p>Then run <code>sudo phpenmod xdebug</code> and <code>sudo service apache2 restart</code>.</p>
+<p>You will notice the configuration is different to 2. There is a good <a href=https://xdebug.org/docs/upgrade_guide>document
+on the changes</a>.</p>
+</li>
+<li>
+<p>Version 2 (Unsupported)</p>
+<p>You can simply run <code>sudo apt install php-xdebug</code> to install the extension.</p>
+<p>The required configuration is different, use the following:</p>
 <div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>xdebug.remote_enable = 1
 xdebug.remote_autostart = 1
-</code></pre></div><p>And then restart Apache. That&rsquo;s all the configuration required. (Easy, innit?)
-This setup basically tells Xdebug to automatically run
+xdebug.remote_port = 9003
+</code></pre></div><p>And then <code>sudo phpenmod xdebug</code> and <code>sudo service apache2 restart</code> as above.</p>
+</li>
+</ul>
+<p>This setup basically tells Xdebug to automatically run
 on every PHP script, and try to connect to a frontend using the default settings.
 You probably shouldn&rsquo;t do this on a production server, but on a development
 box it works fine. Even if the frontend is closed or not debugging, it will
