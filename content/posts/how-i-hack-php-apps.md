@@ -27,7 +27,7 @@ suck it up and use a real debugger like those weird binary exploitation people.
 
 Coincidentally I have also switched my main development machine from Linux to
 Windows as well, so my mission was clear - can I get an awesome PHP audit environment,
-that runs on Windows, has a real debuggger, and doesn't rely on any heavyweight tools?
+that runs on Windows, has a real debugger, and doesn't rely on any heavyweight tools?
 
 * **Step 0: Have a local environment for running PHP.**
 
