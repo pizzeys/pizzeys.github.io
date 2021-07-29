@@ -95,9 +95,9 @@ these as <a href=http://www.theregister.co.uk/2012/01/25/o2_hands_out_phone_numb
 <p>No problems so far, except that they leak those headers to any application on the
 system who wants them - if it has internet permissions, but not READ_PHONE_STATE, it
 can just hit:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>http://mobile.three.co.uk/om_services/threeuserinfo/headers?app_id==ThreeAppAndroid
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>http://mobile.three.co.uk/om_services/threeuserinfo/headers?app_id==ThreeAppAndroid
 </code></pre></div><p>Which returns an XML file looking something like below:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&lt;X-H3G-DEVICE-NAME&gt;LG-Nexus-5&lt;/X-H3G-DEVICE-NAME&gt;
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&lt;X-H3G-DEVICE-NAME&gt;LG-Nexus-5&lt;/X-H3G-DEVICE-NAME&gt;
 &lt;X-H3G-PARTY-ID&gt;xxxxxxxx&lt;/X-H3G-PARTY-ID&gt;
 &lt;X-H3G-ACCT-DATA&gt;xxxxxxxx&lt;/X-H3G-ACCT-DATA&gt;
 &lt;X-H3G-MSISDN&gt;xxxxxxxxxxxx&lt;/X-H3G-MSISDN&gt;

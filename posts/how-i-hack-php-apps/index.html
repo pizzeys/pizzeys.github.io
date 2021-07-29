@@ -144,12 +144,12 @@ version if you need to.</p>
 <p>We can&rsquo;t simply install Xdebug from APT, because the version of Ubuntu that WSL
 ships currently (assuming you&rsquo;re not using your own distro) doesn&rsquo;t include a
 currently supported Xdebug. So, we will install it from PECL:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sudo apt install php-pear php7.4-dev
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sudo apt install php-pear php7.4-dev
 sudo pecl channel-update pecl.php.net
 pecl install xdebug
 </code></pre></div><p>Then edit (or create, if not present) the file
 <code>/etc/php/7.4/mods-available/xdebug.ini</code>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>zend_extension=&#34;/usr/lib/php/20190902/xdebug.so&#34;
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>zend_extension=&#34;/usr/lib/php/20190902/xdebug.so&#34;
 
 [xdebug]
 xdebug.mode=debug
@@ -165,7 +165,7 @@ on the changes</a>.</p>
 <p>Version 2 (Unsupported)</p>
 <p>You can simply run <code>sudo apt install php-xdebug</code> to install the extension.</p>
 <p>The required configuration is different, use the following:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>xdebug.remote_enable = 1
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>xdebug.remote_enable = 1
 xdebug.remote_autostart = 1
 xdebug.remote_port = 9003
 </code></pre></div><p>And then <code>sudo phpenmod xdebug</code> and <code>sudo service apache2 restart</code> as above.</p>

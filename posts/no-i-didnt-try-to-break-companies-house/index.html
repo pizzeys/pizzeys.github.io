@@ -86,7 +86,7 @@ December 30, 2016
 <div>
 <p>I have a tendency to take a joke too far.</p>
 <p>The most recent example of this would be yesterday in IRC, where I was discussing with a few friends what I should name my new company. Being a business to business consultancy, and mostly a one-man operation, the name isn’t that important, but I wanted something with a bit of personality. And I asked:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&lt;Mopman&gt; Is there anything stopping me from registering ; DROP TABLE
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&lt;Mopman&gt; Is there anything stopping me from registering ; DROP TABLE
 &#34;Companies&#34;;-- Ltd as a company name?
 </code></pre></div><p>We weren’t sure of the answer. So I gave it a go. Turns out, the answer is yes you can, that is a perfectly legitimate company name. Also turns out, if you do that, you’ll attract the attention of people around the world, even if you don’t tell anyone other than a few close friends about your new venture.</p>
 <p>I’m really happy that many people seem to like my company name! I like it too, even more now than I did when I registered it. And if you need any application security work done, give me a shout - especially if you’re a non-profit, because I like you guys.</p>
@@ -94,14 +94,14 @@ December 30, 2016
 <p>The company name is a bit of hacker sleight-of-hand… or as some astute people have put it, it’s ‘wrong’. Of course it’s wrong - I’m not a /total/ arsehole. :)</p>
 <p>For those not intimately familiar with SQL injection, it occurs when user input is concatenated with an SQL query insecurely and an attacker is able to modify the query to do things it wasn’t supposed to do. But my input doesn’t do that. It just looks (on the surface) like it might.</p>
 <p>The example many are comparing it to is the infamous Bobby Tables from XKCD. The input used in Bobby Tables is:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Robert&#39;); DROP TABLE Students;--
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Robert&#39;); DROP TABLE Students;--
 </code></pre></div><p>The SQL query that goes along with this on the server would be something like:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE (Name = &#39;&lt;user input goes here&gt;&#39;);
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE (Name = &#39;&lt;user input goes here&gt;&#39;);
 </code></pre></div><p>So by entering the comic’s input, you get:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE (Name = &#39;Robert&#39;); DROP TABLE STUDENTS;--&#39;;
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE (Name = &#39;Robert&#39;); DROP TABLE STUDENTS;--&#39;;
 </code></pre></div><p>The ‘); after Robert closes the preceding part of the query, and then the attacker inserts their own query. The – at the end is a comment, and makes SQL ignore everything after this point.</p>
 <p>However, my company contains nothing to close the preceding part of the query. If you insert my company name here, you get:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE NAME = &#39;; DROP TABLE &#34;Companies&#34;;-- Ltd&#39;;
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>SELECT * FROM Students WHERE NAME = &#39;; DROP TABLE &#34;Companies&#34;;-- Ltd&#39;;
 </code></pre></div><p>The whole ‘invalid’ input is actually valid input, inside the string as expected - it just looks like SQL. This is not going to cause a problem. Even with bad code. Everything in red above is just treated like a normal text string.</p>
 <p>In addition, as many have pointed out, most SQL engines don’t accept double quotes around table names - so even IF this was treated as a query (which it will not be), it would likely fail to drop anyway. Call that ‘defense in depth’ if you like.</p>
 <p>TLDR: It’s pretend. Just a joke! But a funny one, apparently. :)</p>
