@@ -224,7 +224,7 @@ And then run Psalm:
 sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
 ```
 
-And here is where I'd love to tell you it found nothing, because it make for a cleaner
+And here is where I'd love to tell you it found nothing, because it would make for a cleaner
 example. But I didn't pick my bugs carefully enough until this point, and it turns out
 Psalm detects this issue anyway, because it detects it on the ``file_get_contents()`` sink,
 which they already have detected for file disclosure reasons. :)
