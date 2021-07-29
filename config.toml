@@ -159,3 +159,7 @@ url = "posts/"
 name = "Contact"
 weight = 5
 url = "contact/"
+
+[markup]
+  [markup.highlight]
+    style = "pygments"
