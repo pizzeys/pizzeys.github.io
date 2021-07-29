@@ -256,7 +256,7 @@ It now finds our problematic calls to ``file_exists()`` and ``is_readable()``. N
 
 ### Conclusion
 
-I can definitely see Psalm becoming a regularly used tool for speeding up analysis of PHP applications.
+I can definitely see Psalm becoming a regularly used tool for me, for analysis of PHP applications.
 
 I think the particular sinks added here should probably be categorised as something else other than file manipulation,
 but I don't know how best to do that yet and plan to investigate more deeply, which is why it's still a plugin
