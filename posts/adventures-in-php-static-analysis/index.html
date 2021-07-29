@@ -263,7 +263,7 @@ an unsuspecting application might do:</p>
 <span style=color:#19177c>$mail</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>addAttachment</span>(<span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;filename&#39;</span>]);</code></pre></div>
 <p>And then run Psalm:</p>
 <div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
-</code></pre></div><p>And here is where I&rsquo;d love to tell you it found nothing, because it make for a cleaner
+</code></pre></div><p>And here is where I&rsquo;d love to tell you it found nothing, because it would make for a cleaner
 example. But I didn&rsquo;t pick my bugs carefully enough until this point, and it turns out
 Psalm detects this issue anyway, because it detects it on the <code>file_get_contents()</code> sink,
 which they already have detected for file disclosure reasons. :)</p>
