@@ -109,15 +109,15 @@ A+T+T+I+T+U+D+E ;
 when otherwise we felt impotent, spoke to me deeply. So I was inspired to
 work further on this and see if I could discover more ways to access its power.
 I’m not too good at mental arithmetic, so I used the following Ruby code:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#/usr/bin/env ruby
+<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ruby data-lang=ruby><span style=color:#408080;font-style:italic>#/usr/bin/env ruby</span>
 
-def calculate_score(word)
-  word.each_char.inject(0) { |score, n| score + n.ord - 64  }
-end
+<span style=color:green;font-weight:700>def</span> <span style=color:#00f>calculate_score</span>(word)
+  word<span style=color:#666>.</span>each_char<span style=color:#666>.</span>inject(<span style=color:#666>0</span>) { <span style=color:#666>|</span>score, n<span style=color:#666>|</span> score <span style=color:#666>+</span> n<span style=color:#666>.</span>ord <span style=color:#666>-</span> <span style=color:#666>64</span>  }
+<span style=color:green;font-weight:700>end</span>
 
-IO.foreach(&#39;wordsEn.txt&#39;) do |l|
-  puts l if calculate_score(l.chomp!.upcase) == 100
-end
+<span style=color:#800>IO</span><span style=color:#666>.</span>foreach(<span style=color:#ba2121>&#39;wordsEn.txt&#39;</span>) <span style=color:green;font-weight:700>do</span> <span style=color:#666>|</span>l<span style=color:#666>|</span>
+  <span style=color:green>puts</span> l <span style=color:green;font-weight:700>if</span> calculate_score(l<span style=color:#666>.</span>chomp!<span style=color:#666>.</span>upcase) <span style=color:#666>==</span> <span style=color:#666>100</span>
+<span style=color:green;font-weight:700>end</span>
 </code></pre></div><p>I used the great wordlist from here and let it run for a bit. I was able to discover that alongside attitude, an aneurism, crudity, dryrot, fatherhood and, most importantly, liberalism are also able to unlock this newfound perspective on life.</p>
 <p>It has been a productive day.</p>
 </div>
