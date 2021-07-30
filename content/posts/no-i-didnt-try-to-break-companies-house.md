@@ -31,13 +31,13 @@ Robert'); DROP TABLE Students;--
 
 The SQL query that goes along with this on the server would be something like:
 
-```
+```sql
 SELECT * FROM Students WHERE (Name = '<user input goes here>');
 ```
 
 So by entering the comic’s input, you get:
 
-```
+```sql
 SELECT * FROM Students WHERE (Name = 'Robert'); DROP TABLE STUDENTS;--';
 ```
 
@@ -45,7 +45,7 @@ The ‘); after Robert closes the preceding part of the query, and then the atta
 
 However, my company contains nothing to close the preceding part of the query. If you insert my company name here, you get:
 
-```
+```sql
 SELECT * FROM Students WHERE NAME = '; DROP TABLE "Companies";-- Ltd';
 ```
 

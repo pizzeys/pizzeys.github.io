@@ -39,7 +39,7 @@ when otherwise we felt impotent, spoke to me deeply. So I was inspired to
 work further on this and see if I could discover more ways to access its power.
 I&rsquo;m not too good at mental arithmetic, so I used the following Ruby code:
 
-```
+```ruby
 #/usr/bin/env ruby
 
 def calculate_score(word)
