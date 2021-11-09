@@ -156,8 +156,8 @@ Don't complain, it helps with
 
 We can also ignore the next two, because pwndbg is showing us in the leftmost
 column that they are found in the memory where the actual executable of our
-program is located (our program in this case being the PHP runtime!). It didn't
-disassemble them this time, so most likely they are string literals - you can
+program is located (our program in this case being the PHP runtime!). They
+aren't in executable memory this time, so most likely they are string literals - you can
 imagine that a parser's code must have to contain the string '<?php' somewhere. 
 (`if($token == '<?php') ..`)
 
