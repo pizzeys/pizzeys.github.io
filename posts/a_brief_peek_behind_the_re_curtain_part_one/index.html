@@ -218,8 +218,8 @@ Don&rsquo;t complain, it helps with
 <a href=https://en.wikipedia.org/wiki/Return-oriented_programming>Return-Oriented Programming</a>. :)</p>
 <p>We can also ignore the next two, because pwndbg is showing us in the leftmost
 column that they are found in the memory where the actual executable of our
-program is located (our program in this case being the PHP runtime!). It didn&rsquo;t
-disassemble them this time, so most likely they are string literals - you can
+program is located (our program in this case being the PHP runtime!). They
+aren&rsquo;t in executable memory this time, so most likely they are string literals - you can
 imagine that a parser&rsquo;s code must have to contain the string &lsquo;&lt;?php&rsquo; somewhere.
 (<code>if($token == '&lt;?php') ..</code>)</p>
 <p>The next result at <code>0x1710130</code> though is interesting - it&rsquo;s in the heap. That is to say, memory
