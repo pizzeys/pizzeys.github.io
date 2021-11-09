@@ -125,8 +125,8 @@ Executing the following:
 
 ```
 $ gdb /usr/bin/sw-engine
-$ break write
-$ r < /opt/psa/admin/htdocs/index.php
+gdb> break write
+gdb> r < /opt/psa/admin/htdocs/index.php
 ```
 Will stop things where we want to be. But how do we find PHP code? Well, we can
 assume it begins with `<?php`, as PHP code usually does. It's possible they
