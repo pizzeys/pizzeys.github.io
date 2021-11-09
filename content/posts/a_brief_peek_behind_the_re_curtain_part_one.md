@@ -167,7 +167,7 @@ code? We use `x/s <address>` to find out - this is GDB-speak for 'print the
 contents of the memory at that address as if it were a c string'.
 
 But alas, this is our original, encrypted code that we already have. And that
-makes sense, too - we knew it had read it in, from our earlier strace, and so it had to be
+makes sense, too - we knew it had been read in, from our earlier strace, and so it had to be
 somewhere. One left, then, and this one is also in allocated memory -
 the `anon_` prefix here indicates memory requested with
 [mmap()](https://man7.org/linux/man-pages/man2/mmap.2.html) - don't worry if
