@@ -192,8 +192,8 @@ only <code>write()</code> call the application ever makes, so we can use this as
 breakpoint to stop the application. So, let&rsquo;s switch to GDB.</p>
 <p>Executing the following:</p>
 <div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ gdb /usr/bin/sw-engine
-$ break write
-$ r &lt; /opt/psa/admin/htdocs/index.php
+gdb&gt; break write
+gdb&gt; r &lt; /opt/psa/admin/htdocs/index.php
 </code></pre></div><p>Will stop things where we want to be. But how do we find PHP code? Well, we can
 assume it begins with <code>&lt;?php</code>, as PHP code usually does. It&rsquo;s possible they
 have somehow set their engine up to not need that, but again - start with
