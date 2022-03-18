@@ -1,115 +1,30 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests; block-all-mixed-content; default-src 'self'; child-src 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/; form-action 'self'; frame-src 'self'; img-src 'self' https://pizzey.goatcounter.com; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/ https://cdn.jsdelivr.net/; script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://gc.zgo.at; prefetch-src 'self'; connect-src 'self' https://www.google-analytics.com;">
-<meta name=author content="Sam Pizzey">
-<meta name=description content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
-So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://pizzey.me/images/psalm.png">
-<meta name=twitter:title content="Adventures in PHP Static Analysis with Psalm">
-<meta name=twitter:description content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
-So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie.">
-<meta property="og:title" content="Adventures in PHP Static Analysis with Psalm">
-<meta property="og:description" content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
-So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://pizzey.me/posts/adventures-in-php-static-analysis/"><meta property="og:image" content="https://pizzey.me/images/psalm.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2021-07-29T20:33:37+01:00">
-<meta property="article:modified_time" content="2021-07-29T20:33:37+01:00">
-<title>
-Adventures in PHP Static Analysis with Psalm · Sam Pizzey
-</title>
-<link rel=canonical href=https://pizzey.me/posts/adventures-in-php-static-analysis/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.34dfa7b2f5cdeb0f5302b2628f4a7a4bfe88a2431e1397ee4ec605c56ab69701.css integrity="sha256-NN+nsvXN6w9TArJij0p6S/6IokMeE5fuTsYFxWq2lwE=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/custom.css>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.89.2">
-</head>
-<body class="preload-transitions colorscheme-light">
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>
-Sam Pizzey
-</a>
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=content-language content="en"><meta name=color-scheme content="light dark"><meta http-equiv=content-security-policy content="upgrade-insecure-requests; block-all-mixed-content; default-src 'self'; child-src 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/; form-action 'self'; frame-src 'self'; img-src 'self' https://pizzey.goatcounter.com; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/ https://cdn.jsdelivr.net/; script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://gc.zgo.at; prefetch-src 'self'; connect-src 'self' https://www.google-analytics.com;"><meta name=author content="Sam Pizzey"><meta name=description content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
+So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://pizzey.me/images/psalm.png"><meta name=twitter:title content="Adventures in PHP Static Analysis with Psalm"><meta name=twitter:description content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
+So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie."><meta property="og:title" content="Adventures in PHP Static Analysis with Psalm"><meta property="og:description" content="I learned recently of Psalm, the open source static analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve been looking for a good free SAST tool for PHP for a while.
+So the next thing I wanted to discover - is it any help for finding vulnerabilities? And the answer looks to be yes. It has a taint analysis mode, is configurable with custom sinks/sources via plugins and can output the taint graph for us as well as reports in SARIF for other tools to consume (ie."><meta property="og:type" content="article"><meta property="og:url" content="https://pizzey.me/posts/adventures-in-php-static-analysis/"><meta property="og:image" content="https://pizzey.me/images/psalm.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-07-29T20:33:37+01:00"><meta property="article:modified_time" content="2021-07-29T20:33:37+01:00"><title>Adventures in PHP Static Analysis with Psalm · Sam Pizzey</title><link rel=canonical href=https://pizzey.me/posts/adventures-in-php-static-analysis/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.34dfa7b2f5cdeb0f5302b2628f4a7a4bfe88a2431e1397ee4ec605c56ab69701.css integrity="sha256-NN+nsvXN6w9TArJij0p6S/6IokMeE5fuTsYFxWq2lwE=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/custom.css><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><meta name=generator content="Hugo 0.94.2"></head><body class="preload-transitions colorscheme-light"><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Sam Pizzey</a>
 <input type=checkbox id=menu-toggle>
-<label class="menu-button float-right" for=menu-toggle>
-<i class="fa fa-bars fa-fw" aria-hidden=true></i>
-</label>
-<ul class=navigation-list>
-<li class=navigation-item>
-<a class=navigation-link href=/posts/>Blog</a>
-</li>
-<li class=navigation-item>
-<a class=navigation-link href=/contact/>Contact</a>
-</li>
-</ul>
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://pizzey.me/posts/adventures-in-php-static-analysis/>
-Adventures in PHP Static Analysis with Psalm
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2021-07-29T20:33:37+01:00>
-July 29, 2021
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-9-minute read
-</span>
-</div>
-</div>
-</header>
-<div>
-<p>I learned recently of <a href=https://psalm.dev/>Psalm</a>, the open source static
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/contact/>Contact</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://pizzey.me/posts/adventures-in-php-static-analysis/>Adventures in PHP Static Analysis with Psalm</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2021-07-29T20:33:37+01:00>July 29, 2021</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read</span></div></div></header><div><p>I learned recently of <a href=https://psalm.dev/>Psalm</a>, the open source static
 analysis tool for PHP released by Vimeo. And then I did a happy dance, because I&rsquo;ve
-been looking for a good free SAST tool for PHP for a while.</p>
-<p>So the next thing I wanted to discover - is it any help for finding vulnerabilities? And
+been looking for a good free SAST tool for PHP for a while.</p><p>So the next thing I wanted to discover - is it any help for finding vulnerabilities? And
 the answer looks to be yes. It has a taint analysis mode, is configurable
 with custom sinks/sources via plugins and can output the taint graph
-for us as well as reports in SARIF for other tools to consume (ie. GitHub). Neat.</p>
-<p>The Psalm devs are eagerly open with the fact that the taint analysis mode of
+for us as well as reports in SARIF for other tools to consume (ie. GitHub). Neat.</p><p>The Psalm devs are eagerly open with the fact that the taint analysis mode of
 Psalm isn&rsquo;t considered batteries-included - actually they use the metaphor of
 a truck with half a tank of gas, waiting for us to supply the other
 half - which sounds perfect, so in this post I will cover adding a little gas, to
-detect a vulnerability class that it doesn&rsquo;t detect by default.</p>
-<h3 id=part-one-our-exploitable-test-case>
-Part One: Our Exploitable Test Case
-<a class=heading-link href=#part-one-our-exploitable-test-case>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>As <a href=https://pizzey.me/posts/exploiting-an-unexploitable-squirrelmail-bug/>might be clear</a>,
+detect a vulnerability class that it doesn&rsquo;t detect by default.</p><h3 id=part-one-our-exploitable-test-case>Part One: Our Exploitable Test Case
+<a class=heading-link href=#part-one-our-exploitable-test-case><i class="fa fa-link" aria-hidden=true></i></a></h3><p>As <a href=https://pizzey.me/posts/exploiting-an-unexploitable-squirrelmail-bug/>might be clear</a>,
 I really like deserialisation issues. Everybody needs a hobby. Out of the box, Psalm will tell us if we try to do something obviously silly, like
-pass a user-controlled string directly to <code>unserialize()</code>:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
-
-ERROR: TaintedUnserialize - index.php:14:13 - Detected tainted code passed to unserialize or similar (see https://psalm.dev/250)
-
-  $_GET[&#39;x&#39;] - index.php:14:13
-unserialize($_GET[&#39;x&#39;]);
-</code></pre></div><p>But, what it doesn&rsquo;t realise is that in
+pass a user-controlled string directly to <code>unserialize()</code>:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ERROR: TaintedUnserialize - index.php:14:13 - Detected tainted code passed to unserialize or similar (see https://psalm.dev/250)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  $_GET[&#39;x&#39;] - index.php:14:13
+</span></span><span style=display:flex><span>unserialize($_GET[&#39;x&#39;]);
+</span></span></code></pre></div><p>But, what it doesn&rsquo;t realise is that in
 PHP, <a href=https://i.blackhat.com/us-18/Thu-August-9/us-18-Thomas-Its-A-PHP-Unserialization-Vulnerability-Jim-But-Not-As-We-Know-It.pdf>many methods in the standard library that appear safe are equivalent to
 unserialize()</a>,
 as long as the attacker can control the beginning of the string,
@@ -120,80 +35,58 @@ and one of the included stream wrappers, &lsquo;phar://&rsquo;, will unserialize
 file you point it to upon loading it. This behaviour is included in PHP by default,
 cannot be easily disabled, and occurs on functions like <code>file_exists()</code>, which most
 developers would not consider to be a dangerous function - for example see <a href=https://github.com/advisories/GHSA-7w4p-72j7-v7c2>CVE-2018-19296</a>
-in PHPMailer&rsquo;s <code>addAttachment()</code> function.</p>
-<p>This behaviour is, as far as I know (further testing is on my todo list), fixed in PHP 8.
-However, nobody upgrades PHP, so we should be able to pop shells with it for a while longer. :)</p>
-<p>So, in order to reproduce this issue and test our plugin later, I created a
-vulnerable test case like so:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=color:#666>&lt;?</span>php
-<span style=color:#408080;font-style:italic>// Psalm doesn&#39;t treat $argv as a taint source by default so we sneak it into
-</span><span style=color:#408080;font-style:italic>// the $_GET superglobal here just for testing purposes.
-</span><span style=color:#408080;font-style:italic></span><span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;x&#39;</span>] <span style=color:#666>=</span> <span style=color:#19177c>$argv</span>[<span style=color:#666>1</span>];
-
-<span style=color:#408080;font-style:italic>// This is our &#39;POP chain&#39; of sorts. This should under normal conditions never
-</span><span style=color:#408080;font-style:italic>// be executed, only if we managed to exploit the rest of the script.
-</span><span style=color:#408080;font-style:italic></span><span style=color:green;font-weight:700>class</span> <span style=color:#00f;font-weight:700>BangBang</span> {
-  <span style=color:green;font-weight:700>function</span> __destruct() { <span style=color:green;font-weight:700>die</span>(<span style=color:#ba2121>&#34;I hit the ground...</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#ba2121>&#34;</span>); }
-}
-
-<span style=color:#408080;font-style:italic>// Now we perform a normal file operation with a phar:// stream on exploit.phar
-</span><span style=color:#408080;font-style:italic>// which results in a deserialize of the above: `php test.php &#34;phar://exploit.phar&#34;`
-</span><span style=color:#408080;font-style:italic></span><span style=color:green;font-weight:700>echo</span> <span style=color:#ba2121>&#34;The owner of your file is: &#34;</span> <span style=color:#666>.</span> fileowner(<span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;x&#39;</span>]) <span style=color:#666>.</span> <span style=color:#ba2121>&#34;</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#ba2121>&#34;</span>;</code></pre></div>
-<p>Running this with a normal filename as the argument as expected, we get the
-expected output:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/test$ php index.php composer.json
-The owner of your file is: 1000
-</code></pre></div><p>However if we run this by passing a phar:// stream wrapper, to a specially
+in PHPMailer&rsquo;s <code>addAttachment()</code> function.</p><p>This behaviour is, as far as I know (further testing is on my todo list), fixed in PHP 8.
+However, nobody upgrades PHP, so we should be able to pop shells with it for a while longer. :)</p><p>So, in order to reproduce this issue and test our plugin later, I created a
+vulnerable test case like so:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span><span style=color:#666>&lt;?</span>php
+</span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// Psalm doesn&#39;t treat $argv as a taint source by default so we sneak it into
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// the $_GET superglobal here just for testing purposes.
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic></span><span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;x&#39;</span>] <span style=color:#666>=</span> <span style=color:#19177c>$argv</span>[<span style=color:#666>1</span>];
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// This is our &#39;POP chain&#39; of sorts. This should under normal conditions never
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// be executed, only if we managed to exploit the rest of the script.
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic></span><span style=color:green;font-weight:700>class</span> <span style=color:#00f;font-weight:700>BangBang</span> {
+</span></span><span style=display:flex><span>  <span style=color:green;font-weight:700>function</span> __destruct() { <span style=color:green;font-weight:700>die</span>(<span style=color:#ba2121>&#34;I hit the ground...</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#ba2121>&#34;</span>); }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// Now we perform a normal file operation with a phar:// stream on exploit.phar
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic>// which results in a deserialize of the above: `php test.php &#34;phar://exploit.phar&#34;`
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic></span><span style=color:green;font-weight:700>echo</span> <span style=color:#ba2121>&#34;The owner of your file is: &#34;</span> <span style=color:#666>.</span> fileowner(<span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;x&#39;</span>]) <span style=color:#666>.</span> <span style=color:#ba2121>&#34;</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#ba2121>&#34;</span>;</span></span></code></pre></div><p>Running this with a normal filename as the argument as expected, we get the
+expected output:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/test$ php index.php composer.json
+</span></span><span style=display:flex><span>The owner of your file is: 1000
+</span></span></code></pre></div><p>However if we run this by passing a phar:// stream wrapper, to a specially
 created .phar file (creating this can be an exercise for the reader), this
-happens:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/test$ php index.php phar://exploit.phar
-The owner of your file is: 0
-I hit the ground...
-</code></pre></div><p>To recap what is happening here as we&rsquo;re going quite fast:</p>
-<ul>
-<li>When we call <code>fileowner("phar://exploit.phar")</code>, PHP attempts to open exploit.phar as a
-PHAR archive due to the stream wrapper in the filename.</li>
-<li>It deserializes part of the PHAR archive metadata, which is attacker-provided. This
-instantiates an instance of the <code>BangBang</code> class.</li>
-<li>When our <code>BangBang</code> instance falls out of scope, the destructor is called. In this case,
+happens:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/test$ php index.php phar://exploit.phar
+</span></span><span style=display:flex><span>The owner of your file is: 0
+</span></span><span style=display:flex><span>I hit the ground...
+</span></span></code></pre></div><p>To recap what is happening here as we&rsquo;re going quite fast:</p><ul><li>When we call <code>fileowner("phar://exploit.phar")</code>, PHP attempts to open exploit.phar as a
+PHAR archive due to the stream wrapper in the filename.</li><li>It deserializes part of the PHAR archive metadata, which is attacker-provided. This
+instantiates an instance of the <code>BangBang</code> class.</li><li>When our <code>BangBang</code> instance falls out of scope, the destructor is called. In this case,
 it prints a message, but, our attacker controls all properties of this object, which
 enables more complicated exploits via
-<a href=https://vickieli.medium.com/diving-into-unserialize-pop-chains-35bc1141b69a>Property-Oriented Programming</a>.</li>
-</ul>
-<p>Just to note, our file doesn&rsquo;t need to end in .phar, PHP will attempt to load a file with any extension. So
+<a href=https://vickieli.medium.com/diving-into-unserialize-pop-chains-35bc1141b69a>Property-Oriented Programming</a>.</li></ul><p>Just to note, our file doesn&rsquo;t need to end in .phar, PHP will attempt to load a file with any extension. So
 getting the file onto the filesystem can be achieved via normal functionality of the application
-that allows for uploading images, etc. assuming we can know the path to the uploaded file.</p>
-<p>By default, Psalm does not see anything wrong with our test script, even though it&rsquo;s exploitable:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
-Scanning files...
-Analyzing files...
-
-░
-------------------------------
-No errors found!
-------------------------------
-
-Checks took 0.85 seconds and used 63.333MB of memory
-</code></pre></div><p>So let&rsquo;s fix that.</p>
-<h3 id=part-two-adding-a-sink-to-psalm>
-Part Two: Adding A Sink To Psalm
-<a class=heading-link href=#part-two-adding-a-sink-to-psalm>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>If you are not familiar with taint analysis, the above output from Psalm might
+that allows for uploading images, etc. assuming we can know the path to the uploaded file.</p><p>By default, Psalm does not see anything wrong with our test script, even though it&rsquo;s exploitable:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
+</span></span><span style=display:flex><span>Scanning files...
+</span></span><span style=display:flex><span>Analyzing files...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>░
+</span></span><span style=display:flex><span>------------------------------
+</span></span><span style=display:flex><span>No errors found!
+</span></span><span style=display:flex><span>------------------------------
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Checks took 0.85 seconds and used 63.333MB of memory
+</span></span></code></pre></div><p>So let&rsquo;s fix that.</p><h3 id=part-two-adding-a-sink-to-psalm>Part Two: Adding A Sink To Psalm
+<a class=heading-link href=#part-two-adding-a-sink-to-psalm><i class="fa fa-link" aria-hidden=true></i></a></h3><p>If you are not familiar with taint analysis, the above output from Psalm might
 seem mysterious. But it&rsquo;s a simple concept. Taint analysis tools
 operate on the concept of sources and sinks - sources are places in a codebase
 where data may be tainted - that is, user-provided. And sinks are the locations
 in a codebase where tainted data should not reach. Think of for example SQL
 injection - you never want a source, such as the query string of a URL, to
-reach a sink, such as <code>mysql_query()</code> - at least without being untainted first.</p>
-<p>So, Psalm builds a graph of all the ways data can flow through the
+reach a sink, such as <code>mysql_query()</code> - at least without being untainted first.</p><p>So, Psalm builds a graph of all the ways data can flow through the
 application from sources to sinks, and if any nodes connect, it warns us. It will
 follow this flow even if the variable is assigned to a new one, concatenated,
 and so on, unless we tell it the data is untainted now - for example if we passed it
-through a function that we tell it makes it safe again.</p>
-<p>So in order to have Psalm detect our vulnerability, we just need to add all of the
+through a function that we tell it makes it safe again.</p><p>So in order to have Psalm detect our vulnerability, we just need to add all of the
 functions that accept stream wrappers as sinks. The
 <a href=https://psalm.dev/docs/security_analysis/custom_taint_sinks/>documentation</a> shows
 us that we can do this with an Annotation on the function, which seems to be
@@ -201,124 +94,83 @@ a problem as we can&rsquo;t annotate a standard library function. After looking 
 Psalm itself handles this, it turns out the appropriate thing to do is stub this
 function out as a normal user defined function and annotate that. Normally we
 can&rsquo;t do this in PHP, as you can&rsquo;t redefine a function, but it makes
-sense here as we&rsquo;re not actually executing the code, just telling Psalm about it.</p>
-<p>It turns out this only works if it&rsquo;s in a plugin. I&rsquo;m not sure if this is intentional
+sense here as we&rsquo;re not actually executing the code, just telling Psalm about it.</p><p>It turns out this only works if it&rsquo;s in a plugin. I&rsquo;m not sure if this is intentional
 behaviour in Psalm or a bug - it&rsquo;s OK in this case, as we would like to reuse this
 in multiple projects anyway. So, I created a plugin for Psalm,
 <a href=https://github.com/pizzeys/funserialize>funserialize</a>. You can check the Psalm
 documentation to see how to create a plugin, but basically the only relevant file
 here is <a href=https://github.com/pizzeys/funserialize/blob/main/stubs/funserialize.phpstub>stubs/funserialize.phpstub</a> -
-and all this does is stub out the functions we are interested in catching uses of, and annotate them as sinks for Psalm, like this:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=color:#ba2121;font-style:italic>/**
-</span><span style=color:#ba2121;font-style:italic> * @psalm-taint-sink file $filename
-</span><span style=color:#ba2121;font-style:italic> */</span>
-<span style=color:green;font-weight:700>function</span> <span style=color:#00f>fileowner</span>(<span style=color:#19177c>$filename</span>) { }</code></pre></div>
-<p>I included every function that accepts stream wrappers, as far as I know, that
+and all this does is stub out the functions we are interested in catching uses of, and annotate them as sinks for Psalm, like this:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span><span style=color:#ba2121;font-style:italic>/**
+</span></span></span><span style=display:flex><span><span style=color:#ba2121;font-style:italic> * @psalm-taint-sink file $filename
+</span></span></span><span style=display:flex><span><span style=color:#ba2121;font-style:italic> */</span>
+</span></span><span style=display:flex><span><span style=color:green;font-weight:700>function</span> <span style=color:#00f>fileowner</span>(<span style=color:#19177c>$filename</span>) { }</span></span></code></pre></div><p>I included every function that accepts stream wrappers, as far as I know, that
 isn&rsquo;t already supported by Psalm for other reasons. If we add this plugin to
 our composer.json and then enable it with
 <code>./vendor/bin/psalm-plugin enable Mopman\\Funserialize\\Plugin</code>, and <em>then</em>
-run Psalm, it knows that our program is vulnerable now:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
-Scanning files...
-Analyzing files...
-
-░
-
-ERROR: TaintedFile - index.php:15:48 - Detected tainted file handling (see https://psalm.dev/255)
-  $_GET
-    &lt;no known location&gt;
-
-  $_GET[&#39;x&#39;] - index.php:15:48
-echo &#34;The owner of your file is: &#34; . fileowner($_GET[&#39;x&#39;]) . &#34;\n&#34;;
-
-  call to fileowner - index.php:15:48
-echo &#34;The owner of your file is: &#34; . fileowner($_GET[&#39;x&#39;]) . &#34;\n&#34;;
-</code></pre></div><p>Excellent! I wonder&mldr; would it have found a real bug?</p>
-<h3 id=part-three-patting-ourselves-on-the-back-testing>
-Part Three: Patting Ourselves On The Back Testing
-<a class=heading-link href=#part-three-patting-ourselves-on-the-back-testing>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>As Totally Professional Security Researchers, we should backtest our tool changes to make
+run Psalm, it knows that our program is vulnerable now:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/test$ ./vendor/bin/psalm --taint-analysis
+</span></span><span style=display:flex><span>Scanning files...
+</span></span><span style=display:flex><span>Analyzing files...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>░
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ERROR: TaintedFile - index.php:15:48 - Detected tainted file handling (see https://psalm.dev/255)
+</span></span><span style=display:flex><span>  $_GET
+</span></span><span style=display:flex><span>    &lt;no known location&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  $_GET[&#39;x&#39;] - index.php:15:48
+</span></span><span style=display:flex><span>echo &#34;The owner of your file is: &#34; . fileowner($_GET[&#39;x&#39;]) . &#34;\n&#34;;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  call to fileowner - index.php:15:48
+</span></span><span style=display:flex><span>echo &#34;The owner of your file is: &#34; . fileowner($_GET[&#39;x&#39;]) . &#34;\n&#34;;
+</span></span></code></pre></div><p>Excellent! I wonder&mldr; would it have found a real bug?</p><h3 id=part-three-patting-ourselves-on-the-back-testing>Part Three: Patting Ourselves On The Back Testing
+<a class=heading-link href=#part-three-patting-ourselves-on-the-back-testing><i class="fa fa-link" aria-hidden=true></i></a></h3><p>As Totally Professional Security Researchers, we should backtest our tool changes to make
 sure they catch historical bugs. Or to put it another way, I spent all this time figuring out
-how this works, and now I want to see it find a real bug instead of a tiny testcase.</p>
-<p>So, we shall take a look at the PHPMailer issue again. First, we check out the vulnerable
-version of PHPMailer and set up Psalm:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce$ git clone https://github.com/PHPMailer/PHPMailer
-sam@DESKTOP:~/sauce/PHPMailer$ git checkout v6.0.5
-sam@DESKTOP:~/sauce/PHPMailer$ composer require vimeo/psalm
-sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --init
-</code></pre></div><p>As PHPMailer is a library, we need to include some code that actually uses the
+how this works, and now I want to see it find a real bug instead of a tiny testcase.</p><p>So, we shall take a look at the PHPMailer issue again. First, we check out the vulnerable
+version of PHPMailer and set up Psalm:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce$ git clone https://github.com/PHPMailer/PHPMailer
+</span></span><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ git checkout v6.0.5
+</span></span><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ composer require vimeo/psalm
+</span></span><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --init
+</span></span></code></pre></div><p>As PHPMailer is a library, we need to include some code that actually uses the
 library in a vulnerable way - this would usually be in the application itself,
 but for this case I place the following in <code>src/index.php</code>, simulating what
-an unsuspecting application might do:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=color:#666>&lt;?</span>php
-
-<span style=color:green;font-weight:700>require_once</span> <span style=color:#ba2121>&#34;PHPMailer.php&#34;</span>;
-
-<span style=color:green;font-weight:700>use</span> PHPMailer\PHPMailer\PHPMailer;
-
-<span style=color:#19177c>$mail</span> <span style=color:#666>=</span> <span style=color:green;font-weight:700>new</span> PHPMailer();
-<span style=color:#19177c>$mail</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>addAttachment</span>(<span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;filename&#39;</span>]);</code></pre></div>
-<p>And then run Psalm:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
-</code></pre></div><p>And here is where I&rsquo;d love to tell you it found nothing, because it would make for a cleaner
+an unsuspecting application might do:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span><span style=color:#666>&lt;?</span>php
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green;font-weight:700>require_once</span> <span style=color:#ba2121>&#34;PHPMailer.php&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green;font-weight:700>use</span> PHPMailer\PHPMailer\PHPMailer;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#19177c>$mail</span> <span style=color:#666>=</span> <span style=color:green;font-weight:700>new</span> PHPMailer();
+</span></span><span style=display:flex><span><span style=color:#19177c>$mail</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>addAttachment</span>(<span style=color:#19177c>$_GET</span>[<span style=color:#ba2121>&#39;filename&#39;</span>]);</span></span></code></pre></div><p>And then run Psalm:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
+</span></span></code></pre></div><p>And here is where I&rsquo;d love to tell you it found nothing, because it would make for a cleaner
 example. But I didn&rsquo;t pick my bugs carefully enough until this point, and it turns out
 Psalm detects this issue anyway, because it detects it on the <code>file_get_contents()</code> sink,
-which they already have detected for file disclosure reasons. :)</p>
-<p>But, we can still test this, by commenting out the <em>other</em> vulnerability on line 3232 of
-PHPMailer.php, and then running Psalm again to ensure it runs clean.</p>
-<p>Then if we enable Funserialize and run again:</p>
-<div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sam@DESKTOP:~/sauce/PHPMailer$ composer require mopman/funserialize @dev
-sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm-plugin enable Mopman\\Funserialize\\Plugin
-sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
-
-ERROR: TaintedFile - src/PHPMailer.php:1825:33 - Detected tainted file handling (see https://psalm.dev/255)
-  $_GET
-    &lt;no known location&gt;
-
-  $_GET[&#39;filename&#39;] - src/index.php:8:22
-$mail-&gt;addAttachment($_GET[&#39;filename&#39;]);
-
-  /* snipped here for brevity */
-
-  call to file_exists - src/PHPMailer.php:1825:33
-        $readable = file_exists($path);
-</code></pre></div><p>It now finds our problematic calls to <code>file_exists()</code> and <code>is_readable()</code>. Nice.</p>
-<h3 id=conclusion>
-Conclusion
-<a class=heading-link href=#conclusion>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>I can definitely see Psalm becoming a regularly used tool for me, for analysis of PHP applications.</p>
-<p>I think the particular sinks added here should probably be categorised as something else other than file manipulation,
+which they already have detected for file disclosure reasons. :)</p><p>But, we can still test this, by commenting out the <em>other</em> vulnerability on line 3232 of
+PHPMailer.php, and then running Psalm again to ensure it runs clean.</p><p>Then if we enable Funserialize and run again:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ composer require mopman/funserialize @dev
+</span></span><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm-plugin enable Mopman\\Funserialize\\Plugin
+</span></span><span style=display:flex><span>sam@DESKTOP:~/sauce/PHPMailer$ ./vendor/bin/psalm --taint-analysis
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ERROR: TaintedFile - src/PHPMailer.php:1825:33 - Detected tainted file handling (see https://psalm.dev/255)
+</span></span><span style=display:flex><span>  $_GET
+</span></span><span style=display:flex><span>    &lt;no known location&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  $_GET[&#39;filename&#39;] - src/index.php:8:22
+</span></span><span style=display:flex><span>$mail-&gt;addAttachment($_GET[&#39;filename&#39;]);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  /* snipped here for brevity */
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  call to file_exists - src/PHPMailer.php:1825:33
+</span></span><span style=display:flex><span>        $readable = file_exists($path);
+</span></span></code></pre></div><p>It now finds our problematic calls to <code>file_exists()</code> and <code>is_readable()</code>. Nice.</p><h3 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true></i></a></h3><p>I can definitely see Psalm becoming a regularly used tool for me, for analysis of PHP applications.</p><p>I think the particular sinks added here should probably be categorised as something else other than file manipulation,
 but I don&rsquo;t know how best to do that yet and plan to investigate more deeply, which is why it&rsquo;s still a plugin
 and not submitted to the main repo itself until I understand more. Hopefully Psalm can handle the
-&lsquo;not applicable to PHP 8&rsquo; issue and I can try to get them in as equivalent to <code>unserialize()</code>.</p>
-<p>There&rsquo;s definitely scope for improvement in Psalm itself, particularly with performance, on larger
+&rsquo;not applicable to PHP 8&rsquo; issue and I can try to get them in as equivalent to <code>unserialize()</code>.</p><p>There&rsquo;s definitely scope for improvement in Psalm itself, particularly with performance, on larger
 codebases my aging machine has <em>struggled</em> with RAM at times, and on Wordpress I had to actually remove some code
 to get it to even finish (which is why this example isn&rsquo;t using Wordpress!). But overall it runs smoothly and
-is fantastically easy to use, so you should definitely check it out.</p>
-</div>
-<footer>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+is fantastically easy to use, so you should definitely check it out.</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
 2014 -
-2021
+2022
 Sam Pizzey
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-<script data-goatcounter=https://pizzey.goatcounter.com/count async src=//gc.zgo.at/count.js></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.f453d26c79f010446cf0d9770197f77de32c07b7a5512d141a286247fe154a22.js integrity="sha256-9FPSbHnwEERs8Nl3AZf3feMsB7elUS0UGihiR/4VSiI="></script>
+<script data-goatcounter=https://pizzey.goatcounter.com/count async src=//gc.zgo.at/count.js></script></body></html>

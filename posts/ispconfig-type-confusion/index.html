@@ -1,0 +1,121 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=content-language content="en"><meta name=color-scheme content="light dark"><meta http-equiv=content-security-policy content="upgrade-insecure-requests; block-all-mixed-content; default-src 'self'; child-src 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/; form-action 'self'; frame-src 'self'; img-src 'self' https://pizzey.goatcounter.com; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/ https://cdn.jsdelivr.net/; script-src 'self' 'unsafe-inline' https://www.google-analytics.com https://gc.zgo.at; prefetch-src 'self'; connect-src 'self' https://www.google-analytics.com;"><meta name=author content="Sam Pizzey"><meta name=description content="Last autumn, I reported a vulnerability to the ISPConfig team that could allow for authentication bypass on their API. I held off on writing about it in detail at the time due to the impact - although successfully exploiting it required the planets to align for the attacker a little, I popped enough shells in the lab to be uncomfortable! But it&rsquo;s been a while now and hopefully everyone is patched, and the bug is a fun journey."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://pizzey.me/images/superman.png"><meta name=twitter:title content="Is it a string? Is it an integer? No, it's a valid admin token!"><meta name=twitter:description content="Last autumn, I reported a vulnerability to the ISPConfig team that could allow for authentication bypass on their API. I held off on writing about it in detail at the time due to the impact - although successfully exploiting it required the planets to align for the attacker a little, I popped enough shells in the lab to be uncomfortable! But it&rsquo;s been a while now and hopefully everyone is patched, and the bug is a fun journey."><meta property="og:title" content="Is it a string? Is it an integer? No, it's a valid admin token!"><meta property="og:description" content="Last autumn, I reported a vulnerability to the ISPConfig team that could allow for authentication bypass on their API. I held off on writing about it in detail at the time due to the impact - although successfully exploiting it required the planets to align for the attacker a little, I popped enough shells in the lab to be uncomfortable! But it&rsquo;s been a while now and hopefully everyone is patched, and the bug is a fun journey."><meta property="og:type" content="article"><meta property="og:url" content="https://pizzey.me/posts/ispconfig-type-confusion/"><meta property="og:image" content="https://pizzey.me/images/superman.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-03-18T08:35:37+00:00"><meta property="article:modified_time" content="2022-03-18T08:35:37+00:00"><title>Is it a string? Is it an integer? No, it's a valid admin token! · Sam Pizzey</title><link rel=canonical href=https://pizzey.me/posts/ispconfig-type-confusion/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.34dfa7b2f5cdeb0f5302b2628f4a7a4bfe88a2431e1397ee4ec605c56ab69701.css integrity="sha256-NN+nsvXN6w9TArJij0p6S/6IokMeE5fuTsYFxWq2lwE=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/custom.css><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><meta name=generator content="Hugo 0.94.2"></head><body class="preload-transitions colorscheme-light"><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Sam Pizzey</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Blog</a></li><li class=navigation-item><a class=navigation-link href=/contact/>Contact</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://pizzey.me/posts/ispconfig-type-confusion/>Is it a string? Is it an integer? No, it's a valid admin token!</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2022-03-18T08:35:37Z>March 18, 2022</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div></div></header><div><p>Last autumn, I <a href=https://www.ispconfig.org/blog/ispconfig-3-2-7-released-important-security-update/>reported</a>
+a vulnerability to the ISPConfig team that could allow for authentication bypass on their API. I held off on
+writing about it in detail at the time due to the impact - although successfully exploiting it required the
+planets to align for the attacker a little, I popped enough shells in the lab to be uncomfortable! But it&rsquo;s
+been a while now and hopefully everyone is patched, and the bug is a fun journey.</p><h3 id=the-database-class>The Database Class
+<a class=heading-link href=#the-database-class><i class="fa fa-link" aria-hidden=true></i></a></h3><p>I began auditing the ISPConfig codebase by looking at the database layer. This is often the first thing I
+look at in a web application that&rsquo;s new to me, partly because by its very nature, it will be receiving
+untrusted data at some point, and partly because there are a lot of mistakes a developer can make in a database
+layer - SQL injection, obviously, but also very common are type handling issues. A database is expected to process
+a variety of data types, and there&rsquo;s bound to be some conversion and/or casting of these types on the way from the
+network protocol, to the app, and then to the database - many chances for something
+to be given some data in a format it wasn&rsquo;t expecting.</p><p>So, let&rsquo;s take a look at an abbreviated version of the function in ISPConfig that builds an SQL query:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span><span style=color:green;font-weight:700>public</span> <span style=color:green;font-weight:700>function</span> <span style=color:#00f>_build_query_string</span>(<span style=color:#19177c>$sQuery</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;&#39;</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#19177c>$aArgs</span> <span style=color:#666>=</span> func_get_args();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:green;font-weight:700>foreach</span>(<span style=color:#19177c>$aArgs</span> <span style=color:green;font-weight:700>as</span> <span style=color:#19177c>$sKey</span> <span style=color:#666>=&gt;</span> <span style=color:#19177c>$sValue</span>) {
+</span></span><span style=display:flex><span>		<span style=color:#19177c>$iPos2</span> <span style=color:#666>=</span> strpos(<span style=color:#19177c>$sQuery</span>, <span style=color:#ba2121>&#39;??&#39;</span>, <span style=color:#19177c>$iPos2</span>);
+</span></span><span style=display:flex><span>		<span style=color:#19177c>$iPos</span> <span style=color:#666>=</span> strpos(<span style=color:#19177c>$sQuery</span>, <span style=color:#ba2121>&#39;?&#39;</span>, <span style=color:#19177c>$iPos</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:green;font-weight:700>if</span>(is_int(<span style=color:#19177c>$sValue</span>) <span style=color:#666>||</span> is_float(<span style=color:#19177c>$sValue</span>)) {
+</span></span><span style=display:flex><span>			<span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#19177c>$sValue</span>;
+</span></span><span style=display:flex><span>		} <span style=color:green;font-weight:700>elseif</span>(is_null(<span style=color:#19177c>$sValue</span>) <span style=color:#666>||</span> (is_string(<span style=color:#19177c>$sValue</span>) <span style=color:#666>&amp;&amp;</span> (strcmp(<span style=color:#19177c>$sValue</span>, <span style=color:#ba2121>&#39;#NULL#&#39;</span>) <span style=color:#666>==</span> <span style=color:#666>0</span>))) {
+</span></span><span style=display:flex><span>			<span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;NULL&#39;</span>;
+</span></span><span style=display:flex><span>		} <span style=color:green;font-weight:700>elseif</span>(is_array(<span style=color:#19177c>$sValue</span>)) {
+</span></span><span style=display:flex><span>			<span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;&#39;</span>;
+</span></span><span style=display:flex><span>			<span style=color:green;font-weight:700>foreach</span>(<span style=color:#19177c>$sValue</span> <span style=color:green;font-weight:700>as</span> <span style=color:#19177c>$sVal</span>) <span style=color:#19177c>$sTxt</span> <span style=color:#666>.=</span> <span style=color:#ba2121>&#39;,\&#39;&#39;</span> <span style=color:#666>.</span> <span style=color:#19177c>$this</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>escape</span>(<span style=color:#19177c>$sVal</span>) <span style=color:#666>.</span> <span style=color:#ba2121>&#39;\&#39;&#39;</span>;
+</span></span><span style=display:flex><span>			<span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;(&#39;</span> <span style=color:#666>.</span> substr(<span style=color:#19177c>$sTxt</span>, <span style=color:#666>1</span>) <span style=color:#666>.</span> <span style=color:#ba2121>&#39;)&#39;</span>;
+</span></span><span style=display:flex><span>			<span style=color:green;font-weight:700>if</span>(<span style=color:#19177c>$sTxt</span> <span style=color:#666>==</span> <span style=color:#ba2121>&#39;()&#39;</span>) <span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;(0)&#39;</span>;
+</span></span><span style=display:flex><span>		} <span style=color:green;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>			<span style=color:#19177c>$sTxt</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;\&#39;&#39;</span> <span style=color:#666>.</span> <span style=color:#19177c>$this</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>escape</span>(<span style=color:#19177c>$sValue</span>) <span style=color:#666>.</span> <span style=color:#ba2121>&#39;\&#39;&#39;</span>;
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#19177c>$sQuery</span> <span style=color:#666>=</span> substr_replace(<span style=color:#19177c>$sQuery</span>, <span style=color:#19177c>$sTxt</span>, <span style=color:#19177c>$iPos</span>, <span style=color:#666>1</span>);
+</span></span><span style=display:flex><span>		<span style=color:#19177c>$iPos</span> <span style=color:#666>+=</span> strlen(<span style=color:#19177c>$sTxt</span>);
+</span></span><span style=display:flex><span>		<span style=color:#19177c>$iPos2</span> <span style=color:#666>=</span> <span style=color:#19177c>$iPos</span>;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}</span></span></code></pre></div><p>I&rsquo;ve removed some code here to save space, but the important takeaways are:</p><ul><li>The function takes a variable number of arguments and then inserts them into a provided query.</li><li>It can handle a variety of data types, and has different escaping behaviour for each.</li><li>On the backend, it&rsquo;s not using a prepared statement, merely concatenating a query string.</li></ul><p>Initially I was interested in the array behaviour, as this is a common source of bugs for me.
+As HTTP is a text protocol, web developers have a tendency to consider
+any user-supplied data to always be a string, and will often hook an application that assumes it
+only ever gets strings up to a database layer that can handle other types. However, putting an array
+into the PHP superglobals is trivial, for example if you pass a query string like <code>?myArray[]=1&myArray[]=2</code>,
+then <code>$_GET['myArray']</code> will be an array containing &ldquo;1&rdquo; and &ldquo;2&rdquo;.</p><p>Here though, ISPConfig actually does pretty well, the function above will walk the array and escape the
+elements as strings - the worst we can do here is a zero, if we can pass an empty array. This isn&rsquo;t great,
+but ISPConfig does a lot of <code>if(is_empty($param))</code> checks, which will prevent us from abusing this. I have some
+further research ideas here you might be able to guess, but I haven&rsquo;t had time to hit the PHP source yet. :)</p><p>However, if you look at the branches that handle integers and floats, you&rsquo;ll notice that those pass their
+value into the query directly - without escaping or checking them at all. And now we need to learn something about comparing data
+of different types in MySQL&mldr;</p><h3 id=mysql-is-very-weird>MySQL Is Very Weird
+<a class=heading-link href=#mysql-is-very-weird><i class="fa fa-link" aria-hidden=true></i></a></h3><p>Pop quiz time! What happens in MySQL if you compare a string with an integer? If you said &ldquo;It doesn&rsquo;t let you&rdquo;,
+then stay behind after class. If you said &ldquo;It returns 0&rdquo;, then&mldr; partial credit:</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>MariaDB [(none)]&gt; select (&#34;NurGeträumt&#34; = 99);
+</span></span><span style=display:flex><span>+----------------------+
+</span></span><span style=display:flex><span>| (&#34;NurGeträumt&#34; = 99) |
+</span></span><span style=display:flex><span>+----------------------+
+</span></span><span style=display:flex><span>|                    0 |
+</span></span><span style=display:flex><span>+----------------------+
+</span></span><span style=display:flex><span>1 row in set, 1 warning (0.00 sec)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>MariaDB [(none)]&gt; select (&#34;99Luftballons&#34; = 99);
+</span></span><span style=display:flex><span>+------------------------+
+</span></span><span style=display:flex><span>| (&#34;99Luftballons&#34; = 99) |
+</span></span><span style=display:flex><span>+------------------------+
+</span></span><span style=display:flex><span>|                      1 |
+</span></span><span style=display:flex><span>+------------------------+
+</span></span><span style=display:flex><span>1 row in set, 1 warning (0.00 sec)
+</span></span></code></pre></div><p>MySQL actually converts the string to an integer by taking the leading digits from it, and then casting the
+value of those digits to an integer - actually, very similar to the PHP behaviour when using == to compare
+a number and a string. So, if we can pass an integer to an application that only expects to receive strings,
+we can potentially force a comparison to happen in MySQL that isn&rsquo;t what the application expected.</p><p>But we interact with ISPConfig over HTTP, where we can only send strings! How could we pass an integer?</p><h3 id=the-rest-api>The REST API
+<a class=heading-link href=#the-rest-api><i class="fa fa-link" aria-hidden=true></i></a></h3><p>As well as the web interface, ISPConfig provides a REST API which can be used to perform tasks in
+an automated fashion. For instance you can hook your billing system up to it, and when a user signs
+up to your service and pays you, their account is automatically created over the API. The API can be
+sent its data in a number of formats, such as JSON and XML. JSON and XML have true integer types,
+freeing us from HTTP&rsquo;s string based shackles.</p><p>However, using the API requires that the admin create a &ldquo;remote user&rdquo; in the web panel, which is used
+to authenticate your requests. Well, that&rsquo;s not quite accurate - it&rsquo;s used to authenticate <em>one</em> request,
+<code>login</code>, which then provides you with a randomly generated session token you then send with further requests.</p><p>Then, every subsequent request will do this before doing anything further (via <code>getSession()</code>):</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span>	<span style=color:#408080;font-style:italic>// NOTE: $session_id comes from the user-provided XML/JSON and is not necessarily a string...
+</span></span></span><span style=display:flex><span><span style=color:#408080;font-style:italic></span>	<span style=color:#19177c>$sql</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;SELECT * FROM remote_session WHERE remote_session = ? AND tstamp &gt;= UNIX_TIMESTAMP()&#34;</span>;
+</span></span><span style=display:flex><span>	<span style=color:#19177c>$session</span> <span style=color:#666>=</span> <span style=color:#19177c>$app</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>db</span><span style=color:#666>-&gt;</span><span style=color:#7d9029>queryOneRecord</span>(<span style=color:#19177c>$sql</span>, <span style=color:#19177c>$session_id</span>);
+</span></span><span style=display:flex><span>	<span style=color:green;font-weight:700>if</span>(<span style=color:#19177c>$session</span>[<span style=color:#ba2121>&#39;remote_userid&#39;</span>] <span style=color:#666>&gt;</span> <span style=color:#666>0</span>) {
+</span></span><span style=display:flex><span>		<span style=color:green;font-weight:700>return</span> <span style=color:#19177c>$session</span>;
+</span></span><span style=display:flex><span>	} <span style=color:green;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>		<span style=color:green;font-weight:700>throw</span> <span style=color:green;font-weight:700>new</span> SoapFault(<span style=color:#ba2121>&#39;session_does_not_exist&#39;</span>, <span style=color:#ba2121>&#39;The Session is expired or does not exist.&#39;</span>);
+</span></span><span style=display:flex><span>		<span style=color:green;font-weight:700>return</span> <span style=color:green;font-weight:700>false</span>;
+</span></span><span style=display:flex><span>	}</span></span></code></pre></div><p>Normally, a session ID is a random string of alphanumeric characters, for example <code>1f9aefbe41ebbc0e1e154d1cccd27718</code>.
+They are valid until the implementation that calls them calls <code>logout</code>, or, if they never do, for a default length of
+time (at the time of discovery this was 30 minutes).</p><p>So, what happens if we send the integer <code>1</code>, and the token above is a valid token in the database?</p><div class=highlight><pre tabindex=0 style=-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># curl -k https://127.0.0.1:8080/remote/json.php?login --data &#39;{&#34;username&#34;:&#34;admin&#34;,&#34;password&#34;:&#34;hunter2&#34;}&#39;
+</span></span><span style=display:flex><span>{&#34;code&#34;:&#34;ok&#34;,&#34;message&#34;:&#34;&#34;,&#34;response&#34;:&#34;1f9aefbe41ebbc0e1e154d1cccd27718&#34;}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># curl -k https://127.0.0.1:8080/remote/json.php?server_get_all --data &#39;{&#34;session_id&#34;:1}&#39;
+</span></span><span style=display:flex><span>{&#34;code&#34;:&#34;ok&#34;,&#34;message&#34;:&#34;&#34;,&#34;response&#34;:[{&#34;server_id&#34;:&#34;1&#34;,&#34;server_name&#34;:&#34;ispconfig&#34;}]}
+</span></span></code></pre></div><p>Note that we have no quotes around the <code>1</code> above - with a real session ID we would, as it&rsquo;s supposed
+to be a string, but we force an integer to be used here, and this is inserted into the query as-is.
+MySQL then interprets the string it finds in the database (the real session token!) as a number, <code>1</code>,
+and then compares it to our provided <code>1</code> - and they are equal, so we are authenticated!</p><p>This allows us to &lsquo;hitch a ride&rsquo; on an existing session, as long as it has already been created,
+the legitimate session ID begins with a digit, and there aren&rsquo;t a lot of leading digits. The number of
+requests you need to make increases with the length of the number, for instance if you brute force starting
+at 1, and the ID is <code>99999be41ebbc0e1e154d1cccd27718</code>, you are going to have to make 99,999 requests.</p><p>In practice though, it is very common that the ID&rsquo;s end up something useful like <code>14e...</code>. Additionally,
+many implementations of the client library I found were using a new session for every single interaction
+with the server, generating lots of ID&rsquo;s frequently, and even more usefully, some of them <em>never</em> called
+<code>logout</code>, so these sessions were available for the entire 30 minute window every time.</p><h3 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true></i></a></h3><p>I reported this vulnerability to the ISPConfig team on October 18 2021, I had a reply 18 minutes(!) later,
+and they let me know of a fix being in development the next morning. Their patch and advisory were issued
+on October 21 2021, with version 3.2.7. A very decent turnaround.</p><p>The patch contained a fix for the issue, as well as some further hardening of the API in general. The
+main fix here was enforcing that the parameters are passed as strings even when provided through the API.</p><p>If you are implementing an application and want to avoid this issue, the best way would be for your
+application to be aware of the type of data it is receiving, and pass them to the database in a parameterised
+fashion, using a library which allows you to tell the database layer what type the data is (or an ORM
+which handles this matter for you transparently, if available). However, it is a big effort to retrofit
+this onto an existing complex application, so it makes sense for ISPConfig not to go this route,
+when they had a vulnerability that needed to be fixed.</p><p>After I gained access using this vulnerability, I found a further issue that allowed for escalating
+from the API access to a shell. ISPConfig began working on a fix for this issue before I provided
+the details (we had spoken about it vaguely, and they identified the cause from context). In any case,
+they considered this lower severity as the API access alone is already considered to be admin access, and
+that seems sensible to me.</p></div><footer></footer></article></section></div><footer class=footer><section class=container>©
+2014 -
+2022
+Sam Pizzey
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.f453d26c79f010446cf0d9770197f77de32c07b7a5512d141a286247fe154a22.js integrity="sha256-9FPSbHnwEERs8Nl3AZf3feMsB7elUS0UGihiR/4VSiI="></script>
+<script data-goatcounter=https://pizzey.goatcounter.com/count async src=//gc.zgo.at/count.js></script></body></html>
